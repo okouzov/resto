@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ресто">
 
-<link rel="manifest" href="manifest.webmanifest?v=20251231104310">
+<link rel="manifest" href="manifest.webmanifest?v=20251231112314">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
@@ -113,13 +113,13 @@ h1{font-size:18px;margin:0 0 10px}
   min-width:0;
   border:0;
   outline:none;
-  font-size:20px;
-  font-weight:800;
+  font-size:24px;      /* по-големи цифри */
+  font-weight:900;
   background:transparent;
 }
 .unit{
-  font-size:14px;
-  font-weight:800;
+  font-size:15px;
+  font-weight:900;
   color:var(--muted);
   white-space:nowrap;
 }
@@ -151,17 +151,17 @@ h1{font-size:18px;margin:0 0 10px}
   border:1px solid var(--border);
   background:#f9fafb;
 }
-.big{font-size:22px;font-weight:900}
+.big{font-size:24px;font-weight:950}
 .sub{
-  font-size:13px;             /* леко намалено */
+  font-size:13px;
   color:var(--muted);
   margin-top:6px;
-  white-space:nowrap;          /* ВИНАГИ на 1 ред */
+  white-space:nowrap;
   overflow:hidden;
-  text-overflow:ellipsis;      /* ако екранът е супер тесен */
+  text-overflow:ellipsis;
 }
-.warn{color:var(--danger);font-weight:800}
-.ok{color:var(--ok);font-weight:800}
+.warn{color:var(--danger);font-weight:900}
+.ok{color:var(--ok);font-weight:900}
 </style>
 </head>
 <body>
@@ -294,8 +294,6 @@ function ensureAudio(){
   if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
   return audioCtx;
 }
-
-// Cash register-ish: bell ding + quick clack
 function playCashRegister(){
   const ctx = ensureAudio();
   if(!ctx) return;
@@ -339,8 +337,6 @@ function playCashRegister(){
   src.connect(bp); bp.connect(ng); ng.connect(master);
   src.start(now+0.05); src.stop(now+0.13);
 }
-
-// Wind whoosh: filtered noise sweep
 function playWind(){
   const ctx = ensureAudio();
   if(!ctx) return;
@@ -434,7 +430,7 @@ window.addEventListener('load', ()=>dueMajor.focus());
 setMode('EUR');
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js?v=20251231104310');
+  navigator.serviceWorker.register('./sw.js?v=20251231112314');
 }
 </script>
 </body>
