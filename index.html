@@ -5,171 +5,334 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ресто</title>
 
-<meta name="theme-color" content="#16a34a">
+<meta name="theme-color" content="#2563eb">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ресто">
 
-<link rel="manifest" href="manifest.webmanifest?v=20251231014510">
+<link rel="manifest" href="manifest.webmanifest?v=20251231015639">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
 :root{
-  --bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#374151;
+  --bg:#f6f7fb;
+  --card:#fff;
+  --text:#111827;
+  --muted:#374151;
   --border:#e5e7eb;
+  --blue:#2563eb;
+  --danger:#b91c1c;
   --green:#16a34a;
   --yellow:#fde68a;
-  --danger:#b91c1c;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
-.wrap{max-width:520px;margin:0 auto;padding:16px}
-.card{background:var(--card);border-radius:20px;padding:16px}
-h1{font-size:20px;margin:0 0 14px}
-
-.label{font-size:16px;margin-bottom:8px}
-.unit{font-size:16px}
-
-.section{margin-bottom:14px}
-.row{display:flex;gap:10px}
-
-.field{flex:1;display:flex;align-items:center;gap:8px;
-border:1px solid var(--border);border-radius:14px;padding:12px}
-.field input{width:100%;border:0;font-size:22px;outline:none}
-
-.actions{display:flex;gap:12px;margin-top:14px}
-.btn{
-  flex:1;
-  border-radius:16px;
-  padding:18px;
-  font-size:22px;
-  font-weight:800;
-  border:none;
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background:var(--bg);
+  color:var(--text);
 }
-.btn.primary{
-  background:var(--green);
+.wrap{max-width:520px;margin:0 auto;padding:14px}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+}
+h1{font-size:18px;margin:0 0 10px}
+
+/* Toggle */
+.seg{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:6px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  background:#f3f4f6;
+  margin: 8px 0 12px;
+}
+.seg button{
+  border:1px solid var(--border);
+  background:#fff;
+  color:#111;
+  border-radius:12px;
+  padding:10px 0;
+  font-size:16px;
+  font-weight:800;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.seg button.active-eur{
+  background:var(--blue);
+  border-color:var(--blue);
   color:#fff;
 }
-.btn.secondary{
-  background:var(--yellow);
-  color:#000;
-}
+.seg button:active{transform:scale(.99)}
 
-.result{
-  margin-top:16px;
-  padding:16px;
-  border-radius:16px;
-  background:#f1f5f9;
-}
-.big{font-size:28px;font-weight:900}
-.sub{font-size:16px;margin-top:6px}
-
-.section.error{
-  background:#fff5f5;
-  border-radius:16px;
+/* Sections / fields */
+.section{
+  border:1px solid var(--border);
+  border-radius:14px;
   padding:12px;
+  background:#fff;
+  margin-bottom:10px;
 }
-.warn{color:var(--danger);font-weight:700}
+.section.error{
+  border-color:var(--danger);
+  background:#fff5f5;
+}
+.label{
+  font-size:15px;
+  font-weight:700;
+  color:var(--muted);
+  margin:0 0 8px;
+}
+.row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:nowrap;
+}
+.field{
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 10px;
+  min-width:0;
+  background:#fff;
+}
+.field input{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:none;
+  font-size:20px;       /* по-едри цифри */
+  font-weight:800;
+  background:transparent;
+}
+.unit{
+  font-size:14px;
+  font-weight:800;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+/* Buttons */
+.actions{display:flex;gap:10px;margin-top:12px}
+.btn{
+  flex:1;
+  border:none;             /* без рамка */
+  border-radius:14px;
+  padding:12px 12px;       /* нормален размер, не „гигантски“ */
+  font-size:18px;          /* по-едър надпис */
+  font-weight:900;
+  line-height:1;
+  display:flex;            /* надписът да „запълва“ полезната площ */
+  align-items:center;
+  justify-content:center;
+  letter-spacing:.4px;
+}
+.btn.primary{background:var(--green); color:#fff;}
+.btn.secondary{background:var(--yellow); color:#000;}
+.btn:active{transform:scale(.99)}
+
+/* Result */
+.result{
+  margin-top:12px;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#f9fafb;
+}
+.big{font-size:22px;font-weight:900}
+.sub{font-size:15px;color:var(--muted);margin-top:6px}
+.warn{color:var(--danger);font-weight:800}
+.ok{color:#065f46;font-weight:800}
+
+.hint{margin-top:10px;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="card">
+  <div class="card">
+    <h1>Калкулатор за ресто (EUR ↔ BGN)</h1>
 
-<h1>Калкулатор за ресто</h1>
+    <div class="seg" role="tablist" aria-label="Дължима сума">
+      <button id="tabEur" class="active-eur" type="button" role="tab" aria-selected="true">EUR</button>
+      <button id="tabBgn" type="button" role="tab" aria-selected="false">BGN</button>
+    </div>
 
-<div class="section" id="dueSection">
-<div class="label">Дължима сума (EUR)</div>
-<div class="row">
-  <div class="field">
-    <input id="dueMajor" inputmode="numeric" placeholder="0">
-    <span class="unit">€</span>
+    <div class="section" id="dueSection">
+      <div class="label" id="dueLabel">Дължима сума (EUR)</div>
+      <div class="row">
+        <div class="field">
+          <input id="dueMajor" inputmode="numeric" pattern="[0-9]*" placeholder="0" aria-label="Дължима сума - основна" />
+          <span class="unit" id="dueMajorUnit">€</span>
+        </div>
+        <div class="field">
+          <input id="dueMinor" inputmode="numeric" pattern="[0-9]*" placeholder="00" aria-label="Дължима сума - стотинки/центове" />
+          <span class="unit" id="dueMinorUnit">ц</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="label">Дадени пари (BGN)</div>
+      <div class="row">
+        <div class="field">
+          <input id="paidLev" inputmode="numeric" pattern="[0-9]*" placeholder="0" aria-label="Дадени лева" />
+          <span class="unit">лв</span>
+        </div>
+        <div class="field">
+          <input id="paidSt" inputmode="numeric" pattern="[0-9]*" placeholder="00" aria-label="Дадени стотинки" />
+          <span class="unit">ст</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="calcBtn" type="button">СМЕТНИ</button>
+      <button class="btn secondary" id="clearBtn" type="button">ИЗЧИСТИ</button>
+    </div>
+
+    <div class="result" aria-live="polite">
+      <div class="big" id="resultMain">—</div>
+      <div class="sub" id="resultSub">Въведи сума и натисни „Сметни“.</div>
+    </div>
+
+    <div class="hint">Курс: <strong>1 EUR = 1.95583 BGN</strong> · Build: <span id="buildTag">20251231015639</span></div>
   </div>
-  <div class="field">
-    <input id="dueMinor" inputmode="numeric" placeholder="00">
-    <span class="unit">ц</span>
-  </div>
-</div>
-</div>
-
-<div class="section">
-<div class="label">Дадени пари (BGN)</div>
-<div class="row">
-  <div class="field">
-    <input id="paidLev" inputmode="numeric" placeholder="0">
-    <span class="unit">лв</span>
-  </div>
-  <div class="field">
-    <input id="paidSt" inputmode="numeric" placeholder="00">
-    <span class="unit">ст</span>
-  </div>
-</div>
-</div>
-
-<div class="actions">
-<button class="btn primary" id="calcBtn">СМЕТНИ</button>
-<button class="btn secondary" id="clearBtn">ИЗЧИСТИ</button>
-</div>
-
-<div class="result">
-<div class="big" id="resultMain">—</div>
-<div class="sub" id="resultSub">Въведи сума и натисни „Сметни“.</div>
-</div>
-
-</div>
 </div>
 
 <script>
-const RATE=1.95583;
-const dueSection=document.getElementById('dueSection');
-const dueMajor=document.getElementById('dueMajor');
-const dueMinor=document.getElementById('dueMinor');
-const paidLev=document.getElementById('paidLev');
-const paidSt=document.getElementById('paidSt');
-const resultMain=document.getElementById('resultMain');
-const resultSub=document.getElementById('resultSub');
+const RATE = 1.95583;
 
-function n(v){return parseInt(v||'0',10)||0}
-function norm(el){
-  let v=el.value.replace(/\D/g,'');
-  if(v.length===1)v='0'+v;
-  if(v.length>2)v=v.slice(-2);
-  el.value=v;
+const tabEur = document.getElementById('tabEur');
+const tabBgn = document.getElementById('tabBgn');
+
+const dueSection = document.getElementById('dueSection');
+const dueLabel = document.getElementById('dueLabel');
+const dueMajorUnit = document.getElementById('dueMajorUnit');
+const dueMinorUnit = document.getElementById('dueMinorUnit');
+
+const dueMajor = document.getElementById('dueMajor');
+const dueMinor = document.getElementById('dueMinor');
+const paidLev  = document.getElementById('paidLev');
+const paidSt   = document.getElementById('paidSt');
+
+const resultMain = document.getElementById('resultMain');
+const resultSub  = document.getElementById('resultSub');
+
+let dueMode = 'EUR';
+
+function numOrZero(v){
+  v = (v ?? '').toString().trim();
+  if(v === '') return 0;
+  const cleaned = v.replace(/[^0-9]/g,'');
+  return cleaned === '' ? 0 : parseInt(cleaned, 10);
 }
-[dueMinor,paidSt].forEach(e=>e.addEventListener('blur',()=>norm(e)));
+function normalizeMinor(el){
+  // 5 -> 05, 123 -> 23
+  let v = (el.value || '').replace(/\D/g,'');
+  if(v === '') { el.value = ''; return; }
+  if(v.length === 1) v = '0' + v;
+  if(v.length > 2) v = v.slice(-2);
+  el.value = v;
+}
+[dueMinor, paidSt].forEach(el=>{
+  el.addEventListener('input', ()=>{
+    // live: keep only digits, limit to last 2 (without padding yet)
+    let v = el.value.replace(/\D/g,'');
+    if(v.length > 2) v = v.slice(-2);
+    el.value = v;
+  });
+  el.addEventListener('blur', ()=>normalizeMinor(el)); // blur: pad to 2 digits
+});
 
-document.getElementById('calcBtn').onclick=()=>{
+function setMode(mode){
+  dueMode = mode;
+  const eur = mode === 'EUR';
+
+  tabEur.classList.toggle('active-eur', eur);
+  tabBgn.classList.toggle('active-eur', !eur);
+  tabEur.setAttribute('aria-selected', eur ? 'true' : 'false');
+  tabBgn.setAttribute('aria-selected', !eur ? 'true' : 'false');
+
+  dueLabel.textContent = eur ? 'Дължима сума (EUR)' : 'Дължима сума (BGN)';
+  dueMajorUnit.textContent = eur ? '€' : 'лв';
+  dueMinorUnit.textContent = eur ? 'ц' : 'ст';
+}
+tabEur.addEventListener('click', ()=>setMode('EUR'));
+tabBgn.addEventListener('click', ()=>setMode('BGN'));
+
+document.getElementById('calcBtn').addEventListener('click', ()=>{
   dueSection.classList.remove('error');
-  if(!dueMajor.value&&!dueMinor.value){
+
+  const dMajorRaw = dueMajor.value;
+  const dMinorRaw = dueMinor.value;
+  if((dMajorRaw ?? '').trim() === '' && (dMinorRaw ?? '').trim() === ''){
     dueSection.classList.add('error');
-    resultSub.innerHTML='<span class="warn">Моля, въведи дължима сума.</span>';
+    resultMain.textContent = '—';
+    resultSub.innerHTML = '<span class="warn">Моля, въведи дължимата сума.</span>';
+    dueMajor.focus();
     return;
   }
-  const due=n(dueMajor.value)*100+n(dueMinor.value);
-  const paid=n(paidLev.value)*100+n(paidSt.value);
-  const dueBGN=Math.round((due/100)*RATE*100);
-  const change=paid-dueBGN;
-  const eur=Math.round((change/100)/RATE*100);
-  if(change<0){
-    resultMain.textContent='НЕДОСТИГ';
-    resultSub.innerHTML='<span class="warn">Дадените пари не стигат.</span>';
-    return;
-  }
-  resultMain.textContent=(eur/100).toFixed(2)+' € ('+(change/100).toFixed(2)+' лв)';
-  resultSub.textContent='Ресто за връщане';
-};
 
-document.getElementById('clearBtn').onclick=()=>{
+  normalizeMinor(dueMinor);
+  normalizeMinor(paidSt);
+
+  const dMajor = numOrZero(dueMajor.value);
+  const dMinor = numOrZero(dueMinor.value);
+  const pLev   = numOrZero(paidLev.value);
+  const pSt    = numOrZero(paidSt.value);
+
+  const paidStot = pLev*100 + (pSt % 100);
+
+  let dueStot;
+  if(dueMode === 'EUR'){
+    const dueEurCents = dMajor*100 + (dMinor % 100);
+    dueStot = Math.round((dueEurCents/100) * RATE * 100);
+  } else {
+    dueStot = dMajor*100 + (dMinor % 100);
+  }
+
+  const changeSt = paidStot - dueStot;
+  const changeEurCents = Math.round((changeSt/100) / RATE * 100);
+
+  if (navigator.vibrate) navigator.vibrate(15);
+
+  if(changeSt < 0){
+    resultMain.textContent = 'НЕДОСТИГ';
+    resultSub.innerHTML = '<span class="warn">Дадените пари не стигат.</span>';
+    return;
+  }
+
+  const eurTxt = (changeEurCents/100).toFixed(2).replace('.', ',') + ' €';
+  const bgnTxt = (changeSt/100).toFixed(2).replace('.', ',') + ' лв';
+  resultMain.textContent = eurTxt + ' (' + bgnTxt + ')';
+  resultSub.innerHTML = '<span class="ok">Ресто за връщане.</span>';
+});
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
   [dueMajor,dueMinor,paidLev,paidSt].forEach(i=>i.value='');
-  resultMain.textContent='—';
-  resultSub.textContent='Въведи сума и натисни „Сметни“.';
   dueSection.classList.remove('error');
-};
+  resultMain.textContent = '—';
+  resultSub.textContent = 'Въведи сума и натисни „Сметни“.';
+  dueMajor.focus();
+});
 
-window.addEventListener('load',()=>dueMajor.focus());
+window.addEventListener('load', ()=>dueMajor.focus());
+setMode('EUR');
+document.getElementById('buildTag').textContent = "20251231015639";
 
-if('serviceWorker'in navigator){
-  navigator.serviceWorker.register('./sw.js?v=20251231014510');
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js?v=20251231015639');
 }
 </script>
 </body>
