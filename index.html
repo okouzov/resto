@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ресто">
 
-<link rel="manifest" href="manifest.webmanifest?v=20251231112314">
+<link rel="manifest" href="manifest.webmanifest?v=20251231113930">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
@@ -98,27 +98,35 @@ h1{font-size:18px;margin:0 0 10px}
   flex-wrap:nowrap;
 }
 .field{
-  flex:1;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:6px;
   border:1px solid var(--border);
   border-radius:12px;
-  padding:10px 10px;
+  padding:8px 10px;
   min-width:0;
   background:#fff;
 }
+.field.major{flex:1 1 auto;}
+.field.minor{flex:0 0 86px;} /* по-тясно поле за ст/ц */
+
 .field input{
+  flex:1 1 0%;
   width:100%;
   min-width:0;
   border:0;
   outline:none;
-  font-size:24px;      /* по-големи цифри */
+  padding:0;
+  margin:0;
+  height:1.3em;
+  line-height:1.2;
+  font-size:24px;
   font-weight:900;
+  font-variant-numeric: tabular-nums;
   background:transparent;
 }
 .unit{
-  font-size:15px;
+  font-size:14px;
   font-weight:900;
   color:var(--muted);
   white-space:nowrap;
@@ -177,11 +185,11 @@ h1{font-size:18px;margin:0 0 10px}
     <div class="section" id="dueSection">
       <div class="label" id="dueLabel">Дължима сума (EUR)</div>
       <div class="row">
-        <div class="field">
+        <div class="field major">
           <input id="dueMajor" inputmode="numeric" pattern="[0-9]*" placeholder="0" aria-label="Дължима сума - основна" />
           <span class="unit" id="dueMajorUnit">€</span>
         </div>
-        <div class="field">
+        <div class="field minor">
           <input id="dueMinor" inputmode="numeric" pattern="[0-9]*" placeholder="00" aria-label="Дължима сума - стотинки/центове" />
           <span class="unit" id="dueMinorUnit">ц</span>
         </div>
@@ -191,11 +199,11 @@ h1{font-size:18px;margin:0 0 10px}
     <div class="section">
       <div class="label">Дадени пари (BGN)</div>
       <div class="row">
-        <div class="field">
+        <div class="field major">
           <input id="paidLev" inputmode="numeric" pattern="[0-9]*" placeholder="0" aria-label="Дадени лева" />
           <span class="unit">лв</span>
         </div>
-        <div class="field">
+        <div class="field minor">
           <input id="paidSt" inputmode="numeric" pattern="[0-9]*" placeholder="00" aria-label="Дадени стотинки" />
           <span class="unit">ст</span>
         </div>
@@ -284,7 +292,8 @@ function fmtBGN(st){
   return sign + (st/100).toFixed(2).replace('.', ',') + ' лв';
 }
 
-/* --- Web Audio --- */
+/* --- Web Audio (offline) ---
+   iOS може да заглуши звука, ако телефонът е на Silent mode. */
 let audioCtx = null;
 function ensureAudio(){
   if(!audioCtx){
@@ -300,9 +309,10 @@ function playCashRegister(){
   const now = ctx.currentTime;
 
   const master = ctx.createGain();
-  master.gain.setValueAtTime(0.8, now);
+  master.gain.setValueAtTime(0.85, now);
   master.connect(ctx.destination);
 
+  // Bell
   const bell = (f, t0) => {
     const o = ctx.createOscillator();
     o.type = 'sine';
@@ -317,6 +327,7 @@ function playCashRegister(){
   bell(1760, now);
   bell(2200, now + 0.002);
 
+  // Drawer clack
   const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.08), ctx.sampleRate);
   const d = buf.getChannelData(0);
   for(let i=0;i<d.length;i++){
@@ -430,7 +441,7 @@ window.addEventListener('load', ()=>dueMajor.focus());
 setMode('EUR');
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js?v=20251231112314');
+  navigator.serviceWorker.register('./sw.js?v=20251231113930');
 }
 </script>
 </body>

@@ -1,5 +1,5 @@
-// v20251231112314
-const CACHE = "resto-20251231112314";
+// v20251231113930
+const CACHE = "resto-20251231113930";
 const CORE = ["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png"];
 
 self.addEventListener("install", (e) => {
