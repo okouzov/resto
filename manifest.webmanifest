@@ -1,7 +1,7 @@
 {
   "name": "Калкулатор Ресто",
   "short_name": "Ресто",
-  "start_url": "./?v=20251231015639",
+  "start_url": "./?v=20251231021037",
   "display": "standalone",
   "background_color": "#f6f7fb",
   "theme_color": "#2563eb",

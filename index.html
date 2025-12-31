@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ресто">
 
-<link rel="manifest" href="manifest.webmanifest?v=20251231015639">
+<link rel="manifest" href="manifest.webmanifest?v=20251231021037">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
@@ -24,6 +24,7 @@
   --danger:#b91c1c;
   --green:#16a34a;
   --yellow:#fde68a;
+  --ok:#065f46;
 }
 *{box-sizing:border-box}
 body{
@@ -112,7 +113,7 @@ h1{font-size:18px;margin:0 0 10px}
   min-width:0;
   border:0;
   outline:none;
-  font-size:20px;       /* по-едри цифри */
+  font-size:20px;
   font-weight:800;
   background:transparent;
 }
@@ -127,13 +128,13 @@ h1{font-size:18px;margin:0 0 10px}
 .actions{display:flex;gap:10px;margin-top:12px}
 .btn{
   flex:1;
-  border:none;             /* без рамка */
+  border:none;
   border-radius:14px;
-  padding:12px 12px;       /* нормален размер, не „гигантски“ */
-  font-size:18px;          /* по-едър надпис */
+  padding:12px 12px;
+  font-size:18px;
   font-weight:900;
   line-height:1;
-  display:flex;            /* надписът да „запълва“ полезната площ */
+  display:flex;
   align-items:center;
   justify-content:center;
   letter-spacing:.4px;
@@ -153,15 +154,13 @@ h1{font-size:18px;margin:0 0 10px}
 .big{font-size:22px;font-weight:900}
 .sub{font-size:15px;color:var(--muted);margin-top:6px}
 .warn{color:var(--danger);font-weight:800}
-.ok{color:#065f46;font-weight:800}
-
-.hint{margin-top:10px;font-size:12px;color:var(--muted)}
+.ok{color:var(--ok);font-weight:800}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <h1>Калкулатор за ресто (EUR ↔ BGN)</h1>
+    <h1>Калкулатор за ресто</h1>
 
     <div class="seg" role="tablist" aria-label="Дължима сума">
       <button id="tabEur" class="active-eur" type="button" role="tab" aria-selected="true">EUR</button>
@@ -205,8 +204,6 @@ h1{font-size:18px;margin:0 0 10px}
       <div class="big" id="resultMain">—</div>
       <div class="sub" id="resultSub">Въведи сума и натисни „Сметни“.</div>
     </div>
-
-    <div class="hint">Курс: <strong>1 EUR = 1.95583 BGN</strong> · Build: <span id="buildTag">20251231015639</span></div>
   </div>
 </div>
 
@@ -238,7 +235,6 @@ function numOrZero(v){
   return cleaned === '' ? 0 : parseInt(cleaned, 10);
 }
 function normalizeMinor(el){
-  // 5 -> 05, 123 -> 23
   let v = (el.value || '').replace(/\D/g,'');
   if(v === '') { el.value = ''; return; }
   if(v.length === 1) v = '0' + v;
@@ -247,12 +243,11 @@ function normalizeMinor(el){
 }
 [dueMinor, paidSt].forEach(el=>{
   el.addEventListener('input', ()=>{
-    // live: keep only digits, limit to last 2 (without padding yet)
     let v = el.value.replace(/\D/g,'');
     if(v.length > 2) v = v.slice(-2);
     el.value = v;
   });
-  el.addEventListener('blur', ()=>normalizeMinor(el)); // blur: pad to 2 digits
+  el.addEventListener('blur', ()=>normalizeMinor(el));
 });
 
 function setMode(mode){
@@ -271,7 +266,85 @@ function setMode(mode){
 tabEur.addEventListener('click', ()=>setMode('EUR'));
 tabBgn.addEventListener('click', ()=>setMode('BGN'));
 
+function fmtEUR(cents){
+  const sign = cents < 0 ? '-' : '';
+  cents = Math.abs(cents);
+  return sign + (cents/100).toFixed(2).replace('.', ',') + ' €';
+}
+function fmtBGN(st){
+  const sign = st < 0 ? '-' : '';
+  st = Math.abs(st);
+  return sign + (st/100).toFixed(2).replace('.', ',') + ' лв';
+}
+
+/* --- Sound: монетно „подрънкване“ (Web Audio), работи офлайн ---
+   Забележка: iOS може да го заглуши, ако телефонът е на Silent mode. */
+let audioCtx = null;
+function ensureAudio(){
+  if(!audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(AC) audioCtx = new AC();
+  }
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+function playCoin(){
+  const ctx = ensureAudio();
+  if(!ctx) return;
+
+  const now = ctx.currentTime;
+  const out = ctx.createGain();
+  out.gain.setValueAtTime(0.0001, now);
+  out.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+  out.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+  out.connect(ctx.destination);
+
+  // кратък шумов „тик“
+  const noiseBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.06), ctx.sampleRate);
+  const data = noiseBuf.getChannelData(0);
+  for(let i=0;i<data.length;i++){
+    // high-passed-ish noise
+    data[i] = (Math.random()*2-1) * Math.exp(-i/(data.length/4));
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuf;
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 1800;
+  const ng = ctx.createGain();
+  ng.gain.setValueAtTime(0.25, now);
+  ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+  noise.connect(hp); hp.connect(ng); ng.connect(out);
+  noise.start(now);
+  noise.stop(now + 0.06);
+
+  // 3 „звънчета“ (метални частоти)
+  const freqs = [1750, 2350, 3150].map(f => f * (0.92 + Math.random()*0.16));
+  freqs.forEach((f, idx) => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(f, now);
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.22/(idx+1), now + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.18 + idx*0.02);
+
+    // леко затихване на високите
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 6000;
+
+    osc.connect(lp); lp.connect(g); g.connect(out);
+    osc.start(now + idx*0.008);
+    osc.stop(now + 0.22 + idx*0.02);
+  });
+}
+
 document.getElementById('calcBtn').addEventListener('click', ()=>{
+  // звукът тръгва при натискане (user gesture)
+  playCoin();
+
   dueSection.classList.remove('error');
 
   const dMajorRaw = dueMajor.value;
@@ -305,17 +378,15 @@ document.getElementById('calcBtn').addEventListener('click', ()=>{
   const changeSt = paidStot - dueStot;
   const changeEurCents = Math.round((changeSt/100) / RATE * 100);
 
-  if (navigator.vibrate) navigator.vibrate(15);
-
   if(changeSt < 0){
-    resultMain.textContent = 'НЕДОСТИГ';
+    const shortageSt = -changeSt;
+    const shortageEur = -changeEurCents;
+    resultMain.textContent = 'Недостиг: ' + fmtEUR(shortageEur) + ' (' + fmtBGN(shortageSt) + ')';
     resultSub.innerHTML = '<span class="warn">Дадените пари не стигат.</span>';
     return;
   }
 
-  const eurTxt = (changeEurCents/100).toFixed(2).replace('.', ',') + ' €';
-  const bgnTxt = (changeSt/100).toFixed(2).replace('.', ',') + ' лв';
-  resultMain.textContent = eurTxt + ' (' + bgnTxt + ')';
+  resultMain.textContent = fmtEUR(changeEurCents) + ' (' + fmtBGN(changeSt) + ')';
   resultSub.innerHTML = '<span class="ok">Ресто за връщане.</span>';
 });
 
@@ -329,10 +400,9 @@ document.getElementById('clearBtn').addEventListener('click', ()=>{
 
 window.addEventListener('load', ()=>dueMajor.focus());
 setMode('EUR');
-document.getElementById('buildTag').textContent = "20251231015639";
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js?v=20251231015639');
+  navigator.serviceWorker.register('./sw.js?v=20251231021037');
 }
 </script>
 </body>
