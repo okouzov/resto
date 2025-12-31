@@ -5,63 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ресто</title>
 
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#16a34a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ресто">
 
-<link rel="manifest" href="manifest.webmanifest?v=20251231013419">
+<link rel="manifest" href="manifest.webmanifest?v=20251231014510">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 
 <style>
 :root{
-  --bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#6b7280;
-  --border:#e5e7eb;--blue:#2563eb;--blueSoft:#e8f0ff;
-  --danger:#b91c1c;--ok:#065f46;
+  --bg:#f6f7fb;--card:#fff;--text:#111827;--muted:#374151;
+  --border:#e5e7eb;
+  --green:#16a34a;
+  --yellow:#fde68a;
+  --danger:#b91c1c;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
-.wrap{max-width:520px;margin:0 auto;padding:14px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px}
-h1{font-size:16px;margin:0 0 10px}
+.wrap{max-width:520px;margin:0 auto;padding:16px}
+.card{background:var(--card);border-radius:20px;padding:16px}
+h1{font-size:20px;margin:0 0 14px}
 
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;
-border:1px solid var(--border);background:#f3f4f6;border-radius:14px;margin-bottom:12px}
-.seg button{border:0;background:transparent;padding:10px;border-radius:12px;
-font-weight:600;color:var(--muted)}
-.seg button.active{background:var(--blueSoft);color:var(--blue)}
+.label{font-size:16px;margin-bottom:8px}
+.unit{font-size:16px}
 
-.section{border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px}
-.section.error{border-color:var(--danger);background:#fff5f5}
-.label{font-size:12px;color:var(--muted);margin-bottom:6px}
+.section{margin-bottom:14px}
+.row{display:flex;gap:10px}
 
-.row{display:flex;gap:8px}
-.field{flex:1;display:flex;align-items:center;gap:6px;
-border:1px solid var(--border);border-radius:12px;padding:8px 10px}
-.field input{width:100%;border:0;outline:none;font-size:16px}
-.unit{font-size:12px;color:var(--muted)}
+.field{flex:1;display:flex;align-items:center;gap:8px;
+border:1px solid var(--border);border-radius:14px;padding:12px}
+.field input{width:100%;border:0;font-size:22px;outline:none}
 
-.actions{display:flex;gap:10px;margin-top:10px}
-.btn{flex:1;padding:12px;border-radius:14px;border:1px solid var(--border);
-font-weight:700;background:#fff}
-.btn.primary{border-color:var(--blue);color:var(--blue)}
+.actions{display:flex;gap:12px;margin-top:14px}
+.btn{
+  flex:1;
+  border-radius:16px;
+  padding:18px;
+  font-size:22px;
+  font-weight:800;
+  border:none;
+}
+.btn.primary{
+  background:var(--green);
+  color:#fff;
+}
+.btn.secondary{
+  background:var(--yellow);
+  color:#000;
+}
 
-.result{margin-top:12px;border:1px solid var(--border);border-radius:14px;padding:12px;background:#f9fafb}
-.big{font-size:20px;font-weight:800}
-.sub{font-size:12px;color:var(--muted)}
-.warn{color:var(--danger);font-weight:600}
-.ok{color:var(--ok);font-weight:600}
+.result{
+  margin-top:16px;
+  padding:16px;
+  border-radius:16px;
+  background:#f1f5f9;
+}
+.big{font-size:28px;font-weight:900}
+.sub{font-size:16px;margin-top:6px}
+
+.section.error{
+  background:#fff5f5;
+  border-radius:16px;
+  padding:12px;
+}
+.warn{color:var(--danger);font-weight:700}
 </style>
 </head>
 <body>
 <div class="wrap">
 <div class="card">
-<h1>Калкулатор за ресто</h1>
 
-<div class="seg">
-<button id="tabEur" class="active">EUR</button>
-<button id="tabBgn">BGN</button>
-</div>
+<h1>Калкулатор за ресто</h1>
 
 <div class="section" id="dueSection">
 <div class="label">Дължима сума (EUR)</div>
@@ -92,8 +107,8 @@ font-weight:700;background:#fff}
 </div>
 
 <div class="actions">
-<button class="btn primary" id="calcBtn">Сметни</button>
-<button class="btn" id="clearBtn">Изчисти</button>
+<button class="btn primary" id="calcBtn">СМЕТНИ</button>
+<button class="btn secondary" id="clearBtn">ИЗЧИСТИ</button>
 </div>
 
 <div class="result">
@@ -115,33 +130,33 @@ const resultMain=document.getElementById('resultMain');
 const resultSub=document.getElementById('resultSub');
 
 function n(v){return parseInt(v||'0',10)||0}
-function normalize(el){
+function norm(el){
   let v=el.value.replace(/\D/g,'');
-  if(v.length===1) v='0'+v;
-  if(v.length>2) v=v.slice(-2);
+  if(v.length===1)v='0'+v;
+  if(v.length>2)v=v.slice(-2);
   el.value=v;
 }
-[dueMinor,paidSt].forEach(e=>e.addEventListener('blur',()=>normalize(e)));
+[dueMinor,paidSt].forEach(e=>e.addEventListener('blur',()=>norm(e)));
 
 document.getElementById('calcBtn').onclick=()=>{
   dueSection.classList.remove('error');
-  if(!dueMajor.value && !dueMinor.value){
+  if(!dueMajor.value&&!dueMinor.value){
     dueSection.classList.add('error');
     resultSub.innerHTML='<span class="warn">Моля, въведи дължима сума.</span>';
     return;
   }
-  const dueC=n(dueMajor.value)*100+n(dueMinor.value);
+  const due=n(dueMajor.value)*100+n(dueMinor.value);
   const paid=n(paidLev.value)*100+n(paidSt.value);
-  const dueBGN=Math.round((dueC/100)*RATE*100);
+  const dueBGN=Math.round((due/100)*RATE*100);
   const change=paid-dueBGN;
   const eur=Math.round((change/100)/RATE*100);
   if(change<0){
-    resultMain.textContent='Недостиг';
+    resultMain.textContent='НЕДОСТИГ';
     resultSub.innerHTML='<span class="warn">Дадените пари не стигат.</span>';
     return;
   }
   resultMain.textContent=(eur/100).toFixed(2)+' € ('+(change/100).toFixed(2)+' лв)';
-  resultSub.innerHTML='<span class="ok">Ресто за връщане.</span>';
+  resultSub.textContent='Ресто за връщане';
 };
 
 document.getElementById('clearBtn').onclick=()=>{
@@ -154,7 +169,7 @@ document.getElementById('clearBtn').onclick=()=>{
 window.addEventListener('load',()=>dueMajor.focus());
 
 if('serviceWorker'in navigator){
-  navigator.serviceWorker.register('./sw.js?v=20251231013419');
+  navigator.serviceWorker.register('./sw.js?v=20251231014510');
 }
 </script>
 </body>
